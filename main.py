@@ -120,7 +120,8 @@ class BaseWorker(Process):
             try:
                 with urlopen(task.url) as connection:
                     logging.info('Connected to url: {url}, trying to fetch data.'.format(url=task.url))
-                    get_int_from_line = map(int, connection.readline().decode('utf-8').strip().split(', '))
+                    get_int_from_line = list(map(int, connection.readline().decode('utf-8').strip().split(', ')))
+                    assert len(get_int_from_line) >= task.concurrency
                     result = ','.join(str(i) for i in get_int_from_line)
                     full_path_to_raw = FULL_PATH_TO_RAW_DATA.format(task_id=task.id)
                     with open(full_path_to_raw, 'w') as file:
