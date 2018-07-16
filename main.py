@@ -100,16 +100,16 @@ class BaseWorker(Process):
     @staticmethod
     def _chunks(data, n_parts):
         data_length = len(data)
+        elements_count_for_each_thread = data_length // n_parts
         if data_length % n_parts != 0:
-            elements_count_for_each_thread = data_length // n_parts
             for enum, i in enumerate(range(0, data_length, elements_count_for_each_thread)):
                 if enum == n_parts - 1:
                     yield data[i:]
                     break
                 yield data[i:i + elements_count_for_each_thread]
         else:
-            for i in range(0, len(data), n_parts):
-                yield data[i:i + n_parts]
+            for i in range(0, len(data), elements_count_for_each_thread):
+                yield data[i:i + elements_count_for_each_thread]
 
     def run(self):
         while True:
